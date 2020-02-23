@@ -10,9 +10,13 @@ package org.usfirst.frc6647.robot;
 import org.usfirst.lib6647.loops.LooperRobot;
 import org.usfirst.lib6647.oi.JController;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends LooperRobot {
+	private double cameraAngle = 30, cameraHeightMeters = .90, targetHeightMeters = 2.20, distance = 0;
+
 	/** Static {@link Robot} instance. */
 	private static Robot instance = null;
 
@@ -62,5 +66,21 @@ public class Robot extends LooperRobot {
 
 		// Register each instantiated JController object in the joysticks HashMap.
 		registerJoystick(driver1, "driver1");
+	}
+
+	@Override
+	public void robotPeriodic() {
+		super.robotPeriodic();
+
+		var ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+		SmartDashboard.putNumber("ty",
+				NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0));
+
+		distance = (-2.86473 * Math.log(ty + 21.0891) + 11.4298);
+		SmartDashboard.putNumber("Distance Meters", distance);
+
+		cameraAngle = SmartDashboard.getNumber("cameraAngle", cameraAngle);
+		cameraHeightMeters = SmartDashboard.getNumber("cameraHeight", cameraHeightMeters);
+		targetHeightMeters = SmartDashboard.getNumber("targetHeight", targetHeightMeters);
 	}
 }
